@@ -40,13 +40,22 @@
          /**
          * @function playSong
          * @desc Plays a new Buzz object audio file.
-         * @param none.
+         * @param {Object} song.
          */
-         var playSong = function () {
+         var playSong = function (song) {
             currentBuzzObject.play();
             song.playing = true;
          };
 
+         /**
+         * @function stopSong.
+         * @desc Stops the current Buzz object audio file and sets the current playing song to null.
+         * @param {Object} song.
+         */
+         var stopSong = function(song) {
+            currentBuzzObject.stop();
+            song.playing = null;
+         };
          /**
          * @function getSongIndex
          * @desc returns the index of a given song from the album.
@@ -102,13 +111,34 @@
             currentSongIndex--;
 
             if(currentSongIndex < 0) {
-              currentBuzzObject.stop();
-              SongPlayer.currentSong.playing = null;
+              stopSong();
             } else {
                 var song = currentAlbum.songs[currentSongIndex];
                 setSong(song);
                 playSong(song);
             }
+        };
+
+        /**
+        * @function SongPlayer.next
+        * @desc Gets the index of the song after current song and plays it. If the index is greater than the length of the album then set the index to 0.
+        * @param none.
+        */
+        SongPlayer.next = function() {
+            var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+            currentSongIndex++;
+
+            var lastSongIndex = currentAlbum.songs.length - 1;
+
+            if(currentSongIndex > lastSongIndex) {
+                stopSong(SongPlayer.currentSong);
+            } else {
+                var song = currentAlbum.songs[currentSongIndex];
+                setSong(song);
+                playSong(song);
+              }
+
+
         };
 
 
