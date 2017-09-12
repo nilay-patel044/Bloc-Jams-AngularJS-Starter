@@ -31,7 +31,8 @@
 
             currentBuzzObject = new buzz.sound(song.audioUrl, {
                 formats: ['mp3'],
-                preload: true
+                preload: true,
+                volume: 3
             });
 
             SongPlayer.currentSong = song;
