@@ -1,5 +1,5 @@
 (function() {
-    function SongPlayer(Fixtures) {
+    function SongPlayer($rootScope, Fixtures) {
         /**
         * @desc An empty SongPlayer object that is returned at very end of this service.
         * @type {Object}
@@ -33,6 +33,12 @@
                 formats: ['mp3'],
                 preload: true,
                 volume: 3
+            });
+
+            currentBuzzObject.bind('timeUpdate', function() {
+                $rootScope.$apply(function() {
+                    SongPlayer.currentTime = currentBuzzObject.getTime();
+                });
             });
 
             SongPlayer.currentSong = song;
@@ -71,6 +77,13 @@
          * @type {Object}
          */
          SongPlayer.currentSong = null;
+
+         /**
+         * @desc Current playback time (in seconds) of currently playing song
+         * @type {Number}
+         */
+         SongPlayer.currentTime = null;
+
 
          /**
          * @function SongPlayer.play
@@ -142,11 +155,22 @@
 
         };
 
+        /**
+        * @function setCurrentTime
+        * @desc Set current time (in seconds) of currently playing song
+        * @param {Number} time
+        */
+        SongPlayer.setCurrentTime = function(time) {
+            if (currentBuzzObject) {
+                currentBuzzObject.setTime(time);
+            }
+        };
+
 
         return SongPlayer;
     }
 
     angular
         .module('blocJams')
-        .factory('SongPlayer', ['Fixtures', SongPlayer]);
+        .factory('SongPlayer', ['$rootScope', 'Fixtures', SongPlayer]);
 })();
