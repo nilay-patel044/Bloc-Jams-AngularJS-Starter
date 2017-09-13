@@ -84,6 +84,12 @@
          */
          SongPlayer.currentTime = null;
 
+         /**
+         * @desc The default volume of Current Buzz Object audio file.
+         * @type {Number}
+         */
+         SongPlayer.volume = 60;
+
 
          /**
          * @function SongPlayer.play
@@ -164,6 +170,18 @@
             if (currentBuzzObject) {
                 currentBuzzObject.setTime(time);
             }
+        };
+
+        /**
+        * @function setVolume
+        * @desc If the current Buzz Object audio file exists, then set the volume.
+        * @param {Number} volume
+        */
+        SongPlayer.setVolume = function(volume) {
+            if (currentBuzzObject) {
+                currentBuzzObject.setVolume(volume);
+            }
+            SongPlayer.volume = volume;
         };
 
 
