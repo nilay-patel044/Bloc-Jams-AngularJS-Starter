@@ -6,6 +6,7 @@
         */
          var SongPlayer = {};
 
+
          /**
          * @desc Stores the album information it gets from the Fixtures service.
          * @type {Object}
@@ -21,18 +22,17 @@
          /**
          * @function setSong
          * @desc Stops currently playing song and loads new Buzz object audio file.
-         * @param {Object} song
+         * @param {Object} song.
          */
          var setSong = function(song) {
             if (currentBuzzObject) {
-                currentBuzzObject.stop();
-                SongPlayer.currentSong.playing = null;
+                stopSong(SongPlayer.currentSong);
             }
 
             currentBuzzObject = new buzz.sound(song.audioUrl, {
                 formats: ['mp3'],
                 preload: true,
-                volume: 3
+                volume: 80
             });
 
             currentBuzzObject.bind('timeUpdate', function() {
@@ -40,6 +40,13 @@
                     SongPlayer.currentTime = currentBuzzObject.getTime();
                 });
             });
+
+            currentBuzzObject.bind('ended', function() {
+                $rootScope.$apply(function() {
+                    SongPlayer.next();
+                });
+            });
+
 
             SongPlayer.currentSong = song;
          };
@@ -88,13 +95,13 @@
          * @desc The default volume of Current Buzz Object audio file.
          * @type {Number}
          */
-         SongPlayer.volume = 60;
+         SongPlayer.volume = 80;
 
 
          /**
          * @function SongPlayer.play
          * @desc If current song is not the song user clicked on, then set current song to it and play it. Otherwise, if the song is paused, then play it.
-         * @param {Object} song
+         * @param {Object} song.
          */
          SongPlayer.play = function(song) {
             song = song || SongPlayer.currentSong;
@@ -104,7 +111,7 @@
 
             } else if (SongPlayer.currentSong === song) {
                 if (currentBuzzObject.isPaused()) {
-                    currentBuzzObject.play();
+                    playSong(song);
                 }
               }
         };
@@ -112,7 +119,7 @@
         /**
         * @function SongPlayer.pause
         * @desc Pause the currently playing audio file as Buzz object. Set the status flag to false.
-        * @param {Object} song
+        * @param {Object} song.
         */
         SongPlayer.pause = function(song) {
             song = song || SongPlayer.currentSong;
@@ -131,7 +138,7 @@
             currentSongIndex--;
 
             if(currentSongIndex < 0) {
-              stopSong();
+              stopSong(SongPlayer.currentSong);
             } else {
                 var song = currentAlbum.songs[currentSongIndex];
                 setSong(song);
@@ -148,9 +155,7 @@
             var currentSongIndex = getSongIndex(SongPlayer.currentSong);
             currentSongIndex++;
 
-            var lastSongIndex = currentAlbum.songs.length - 1;
-
-            if(currentSongIndex > lastSongIndex) {
+            if(currentSongIndex > currentAlbum.songs.length) {
                 stopSong(SongPlayer.currentSong);
             } else {
                 var song = currentAlbum.songs[currentSongIndex];
@@ -164,7 +169,7 @@
         /**
         * @function setCurrentTime
         * @desc Set current time (in seconds) of currently playing song
-        * @param {Number} time
+        * @param {Number} time.
         */
         SongPlayer.setCurrentTime = function(time) {
             if (currentBuzzObject) {
@@ -175,7 +180,7 @@
         /**
         * @function setVolume
         * @desc If the current Buzz Object audio file exists, then set the volume.
-        * @param {Number} volume
+        * @param {Number} volume.
         */
         SongPlayer.setVolume = function(volume) {
             if (currentBuzzObject) {
