@@ -39,6 +39,11 @@
                 $rootScope.$apply(function() {
                     SongPlayer.currentTime = currentBuzzObject.getTime();
                 });
+
+            //Condition checks for current song length to be greater than or equal to the track's duration. If so, then play the next song in line.
+            if(SongPlayer.currentTime >= currentBuzzObject.duration) {
+                $('#next').trigger('click');
+            }
             });
 
             currentBuzzObject.bind('ended', function() {
@@ -107,7 +112,7 @@
             song = song || SongPlayer.currentSong;
             if (SongPlayer.currentSong !== song) {
                 setSong(song);
-                playSong();
+                playSong(song);
 
             } else if (SongPlayer.currentSong === song) {
                 if (currentBuzzObject.isPaused()) {
